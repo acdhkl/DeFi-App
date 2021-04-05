@@ -5,6 +5,7 @@ import Web3 from 'web3'
 import DaiToken from '../abis/DaiToken.json'
 import DappToken from '../abis/DappToken.json'
 import TokenFarm from '../abis/TokenFarm.json'
+import Main from './Main'
 
 
 class App extends Component {
@@ -58,7 +59,6 @@ class App extends Component {
     }
 
     this.setState({loading: false})
-    console.log(this.state({loading}))
   }
   //Connect to blockchain
   async loadWeb3() {
@@ -72,6 +72,22 @@ class App extends Component {
     else {
       window.alert('Non-Ethereum browser detected. Make sure MetaMask extension is installed and running')
     }
+  }
+
+  stakeTokens = (amount) => {
+    this.setState({loading: true})
+    this.state.daiToken.methods.approve(this.state.tokenFarm._address, amount).send({from: this.state.account}).on('transactionHash', (hash) => {
+      this.state.tokenFarm.methods.stakeTokens(amount).send({ from: this.state.account}).on('transactionHash', (hash) => {
+        this.setState({ loading:false })
+      })
+    })
+  }
+
+  unstakeTokens = (amount) => {
+    this.setState({ loading: true })
+    this.state.tokenFarm.methods.unstakeTokens().send({ from: this.state.account }).on('transactionHash', (hash) => {
+      this.setState({ loading: false })
+    })
   }
 
   constructor(props) {
@@ -89,6 +105,18 @@ class App extends Component {
   }
 
   render() {
+    let content
+    if (this.state.loading){
+      content = <p id="loader" className="text-center">Loading...</p>
+    } else {
+      content = <Main 
+      daiTokenBalance = {this.state.daiTokenBalance}
+      dappTokenBalance = {this.state.dappTokenBalance}
+      stakingBalance = {this.state.stakingBalance}
+      stakeTokens = {this.stakeTokens}
+      unstakeTokens = {this.unstakeTokens}
+      />
+    }
     return (
       <div>
         <Navbar account={this.state.account} />
@@ -103,8 +131,7 @@ class App extends Component {
                 >
                 </a>
 
-                <h1>Hello, World!</h1>
-
+              {content}
               </div>
             </main>
           </div>
