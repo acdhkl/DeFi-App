@@ -1,6 +1,6 @@
 # Ethereum Liquidity Miner
 
-A liquidity miner built on top of Ethereum, which utilizes the blockchain to reward users for staking their currency (in the form of DAI tokens).
+A liquidity miner built on top of Ethereum, which utilizes the blockchain to reward users for staking their money (in the form of DAI tokens).
 
 ## Setup
 1. Download the code
